@@ -2167,8 +2167,10 @@ int UpnpSubscribeAsync(UpnpClient_Handle Hnd,
         TPJobInit(&job, (start_routine)UpnpThreadDistribution, Param);
         TPJobSetFreeFunction(&job, (free_routine)free);
         TPJobSetPriority(&job, MED_PRIORITY);
+
         if (ThreadPoolAdd(&gSendThreadPool, &job, NULL) != 0) {
                 free(Param);
+                return UPNP_E_OUTOF_MEMORY;
         }
 
         UpnpPrintf(UPNP_ALL,
@@ -2366,8 +2368,10 @@ int UpnpUnSubscribeAsync(UpnpClient_Handle Hnd,
         TPJobInit(&job, (start_routine)UpnpThreadDistribution, Param);
         TPJobSetFreeFunction(&job, (free_routine)free);
         TPJobSetPriority(&job, MED_PRIORITY);
-        if (ThreadPoolAdd(&gSendThreadPool, &job, NULL) != 0) {
+        int ret = ThreadPoolAdd(&gSendThreadPool, &job, NULL);
+        if (ret != 0) {
                 free(Param);
+                retVal = UPNP_E_OUTOF_MEMORY;
         }
 
 exit_function:
@@ -2505,6 +2509,7 @@ int UpnpRenewSubscriptionAsync(UpnpClient_Handle Hnd,
         TPJobSetPriority(&job, MED_PRIORITY);
         if (ThreadPoolAdd(&gSendThreadPool, &job, NULL) != 0) {
                 free(Param);
+                return UPNP_E_OUTOF_MEMORY;
         }
 
         UpnpPrintf(UPNP_ALL,
@@ -2989,6 +2994,7 @@ int UpnpSendActionAsync(UpnpClient_Handle Hnd,
         TPJobSetPriority(&job, MED_PRIORITY);
         if (ThreadPoolAdd(&gSendThreadPool, &job, NULL) != 0) {
                 free(Param);
+                return UPNP_E_OUTOF_MEMORY;
         }
 
         UpnpPrintf(UPNP_ALL,
@@ -3116,8 +3122,10 @@ int UpnpSendActionExAsync(UpnpClient_Handle Hnd,
         TPJobSetFreeFunction(&job, (free_routine)free);
 
         TPJobSetPriority(&job, MED_PRIORITY);
-        if (ThreadPoolAdd(&gSendThreadPool, &job, NULL) != 0) {
+        int ret = ThreadPoolAdd(&gSendThreadPool, &job, NULL);
+        if (ret != 0) {
                 free(Param);
+                retVal = UPNP_E_OUTOF_MEMORY;
         }
 
         UpnpPrintf(UPNP_ALL,
@@ -3126,7 +3134,7 @@ int UpnpSendActionExAsync(UpnpClient_Handle Hnd,
                 __LINE__,
                 "Exiting UpnpSendActionAsync\n");
 
-        return UPNP_E_SUCCESS;
+        return retVal;
 }
 
 int UpnpGetServiceVarStatusAsync(UpnpClient_Handle Hnd,
@@ -3188,8 +3196,10 @@ int UpnpGetServiceVarStatusAsync(UpnpClient_Handle Hnd,
 
         TPJobSetPriority(&job, MED_PRIORITY);
 
-        if (ThreadPoolAdd(&gSendThreadPool, &job, NULL) != 0) {
+        int ret = ThreadPoolAdd(&gSendThreadPool, &job, NULL);
+        if (ret != 0) {
                 free(Param);
+                return UPNP_E_OUTOF_MEMORY;
         }
 
         UpnpPrintf(UPNP_ALL,

@@ -901,8 +901,9 @@ void readFromSSDPSocket(SOCKET socket)
                         if (ThreadPoolAdd(&gRecvThreadPool, &job, NULL) != 0)
                                 free_ssdp_event_handler_data(data);
                 }
-        } else
+        } else {
                 free_ssdp_event_handler_data(data);
+        }
 }
 
 /*!
